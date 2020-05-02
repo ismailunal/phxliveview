@@ -20,6 +20,7 @@ defmodule PhxliveviewWeb.LightLive do
     <button type="button" phx-click="inc">inc by 10</button>
     <button type="button" phx-click="dec">desc by 10</button>
     <button type="button" phx-click="on">set to "100"</button>
+    <button type="button" phx-click="random">random</button>
 
     """
   end
@@ -35,14 +36,17 @@ defmodule PhxliveviewWeb.LightLive do
   end
 
   def handle_event("inc", _, socket) do
-    brightness = socket.assigns.brightness + 10
-    socket = assign(socket, :brightness, brightness)
+    socket = update(socket, :brightness, &min(&1 + 10, 100))
     {:noreply, socket}
   end
 
   def handle_event("dec", _, socket) do
-    socket = update(socket, :brightness, &(&1 - 10))
+    socket = update(socket, :brightness, &max(&1 - 10, 0))
     {:noreply, socket}
+  end
+
+  def handle_event("random", _, socket) do
+    {:noreply, assign(socket, :brightness, Enum.random(0..100))}
   end
 
 
